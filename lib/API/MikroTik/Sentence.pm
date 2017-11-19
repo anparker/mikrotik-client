@@ -89,45 +89,41 @@ sub _fetch_word {
     return do { $self->{_buff} = $$buff; $$buff = '' }
         if $buff_bytes < 5 && $$buff ne "\x00";
 
-    my ($len, $len_bytes) = _strip_length($buff);
+    my $len = _strip_length($buff);
+    my $word = substr $$buff, 0, $len, '';
 
-    return do { $self->{_buff} = _encode_length($len) . $$buff; $$buff = '' }
-        if ($buff_bytes - $len_bytes) < $len;
+    return do { $self->{_buff} = _encode_length($len) . $word; ''; }
+        if (length $word) < $len;
 
-    return substr $$buff, 0, $len, '';
+    return $word;
 }
 
 sub _strip_length {
     my $buff = shift;
 
     my $len = unpack 'C', substr $$buff, 0, 1, '';
-    my $len_bytes = 1;
 
     if (($len & 0x80) == 0x00) {
-        return ($len, $len_bytes);
+        return $len;
     }
     elsif (($len & 0xc0) == 0x80) {
-        $len_bytes = 2;
         $len &= ~0x80;
         $len <<= 8;
         $len += unpack 'C', substr $$buff, 0, 1, '';
     }
     elsif (($len & 0xe0) == 0xc0) {
-        $len_bytes = 3;
         $len &= ~0xc0;
         $len <<= 16;
         $len += unpack 'n', substr $$buff, 0, 2, '';
     }
     elsif (($len & 0xf0) == 0xe0) {
-        $len_bytes = 4;
         $len = unpack 'N', pack('C', ($len & ~0xe0)) . substr($$buff, 0, 3, '');
     }
     elsif (($len & 0xf8) == 0xf0) {
-        $len_bytes = 5;
         $len = unpack 'N', substr $$buff, 0, 4, '';
     }
 
-    return ($len, $len_bytes);
+    return $len;
 }
 
 1;
