@@ -8,7 +8,7 @@ use Mojo::Util 'md5_sum';
 use Scalar::Util 'weaken';
 
 use constant DEBUG => $ENV{API_MIKROTIK_DEBUG} || 0;
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 has error    => '';
 has host     => '192.168.88.1';
