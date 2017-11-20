@@ -40,6 +40,7 @@ is shift @$words, '/login', 'right command';
 is_deeply [sort @$words], ['.tag=11', '=ret=foo', '=user=bar', '?user=test'],
     'right attributes';
 
+# buffer ends in the middle of the word
 $packed = encode_sentence('/sys/info/print', {test => 1, another => 2});
 substr $packed, 20, 16, '';
 $words = $s->fetch(\$packed);
@@ -47,6 +48,13 @@ is_deeply $words, ['/sys/info/print'], 'right results';
 ok $s->is_incomplete, 'incomplete is set';
 $s->reset;
 ok !$s->is_incomplete, 'incomplete is not longer set';
+
+# buffer ends at the end of the word, before an empty closing word
+$packed = encode_sentence('/one/two', {}, {three => 'four', five => 'six'});
+substr $packed, 19, 17, '';
+$words = $s->fetch(\$packed);
+is_deeply $words, ['/one/two', '?five=six'], 'right results';
+ok $s->is_incomplete, 'incomplete is set';
 
 done_testing();
 

@@ -33,7 +33,7 @@ sub fetch {
     my ($self, $buff) = @_;
     my $words;
 
-    if (my $old_buff = delete $self->{_buff}) {
+    if (defined(my $old_buff = delete $self->{_buff})) {
         $words = $self->{words};
         $$buff = $old_buff . $$buff;
     }
@@ -44,7 +44,7 @@ sub fetch {
 }
 
 sub is_incomplete {
-    return !!$_[0]->{_buff};
+    return !!exists $_[0]->{_buff};
 }
 
 sub reset {
@@ -85,8 +85,8 @@ sub _encode_word {
 sub _fetch_word {
     my ($self, $buff) = @_;
 
-    return unless my $buff_bytes = length $$buff;
-    return do { $self->{_buff} = $$buff; $$buff = '' }
+    return $self->{_buff} = '' unless my $buff_bytes = length $$buff;
+    return do { $self->{_buff} = $$buff; $$buff = ''; }
         if $buff_bytes < 5 && $$buff ne "\x00";
 
     my $len = _strip_length($buff);
