@@ -44,7 +44,7 @@ sub fetch {
 }
 
 sub is_incomplete {
-    return !!exists $_[0]->{_buff};
+    return exists $_[0]->{_buff};
 }
 
 sub reset {
