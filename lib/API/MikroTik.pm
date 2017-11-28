@@ -3,6 +3,7 @@ use Mojo::Base '-base';
 
 use API::MikroTik::Response;
 use API::MikroTik::Sentence qw(encode_sentence);
+use Mojo::Collection;
 use Mojo::IOLoop;
 use Mojo::Util 'md5_sum';
 use Scalar::Util 'weaken';
@@ -187,14 +188,15 @@ sub _read {
     for (@$data) {
         next unless my $r = $self->{requests}{delete $_->{'.tag'}};
         my $type = delete $_->{'.type'};
-        push @{$r->{data}}, $_ if %$_ && !$r->{subscription};
+        push @{$r->{data} ||= Mojo::Collection->new()}, $_
+            if %$_ && !$r->{subscription};
 
         if ($type eq '!re' && $r->{subscription}) {
             $r->{cb}->($self, '', [$_]);
 
         }
         elsif ($type eq '!done') {
-            $r->{data} ||= [];
+            $r->{data} ||= Mojo::Collection->new();
             $self->_finish($r);
 
         }
@@ -403,8 +405,9 @@ An alias for L</command>.
       die "Error: $err, category: " . $list->[0]{category};
   }
 
-Execute command on remote host and return list of hashrefs containing elements
-returned by host. You can append callback for non-blocking calls.
+Execute command on remote host and return L<Mojo::Collection> with hashrefs
+containing elements returned by host. You can append callback for non-blocking
+calls.
 
 In a case of error it may return extra attributes to C<!trap> or C<!fatal> API
 replies in addition to error messages in an L</error> attribute or an C<$err>

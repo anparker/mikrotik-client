@@ -57,6 +57,7 @@ Mojo::IOLoop->next_tick(
             '/system/resource/print',
             {'.proplist' => 'board-name,version,uptime'} => sub {
                 shift;
+                isa_ok $_[1], 'Mojo::Collection', 'right result type';
                 is_deeply [@_],
                     [
                     '',
