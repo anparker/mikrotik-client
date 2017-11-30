@@ -15,7 +15,7 @@ sub encode_sentence {
 
     my $sentence = _encode_word($command);
 
-    $sentence .= _encode_word("=$_=$attr->{$_}") for keys %$attr;
+    $sentence .= _encode_word("=$_=" . ($attr->{$_} // '')) for keys %$attr;
 
     if ($query) {
         $sentence .= _encode_word($_) for @{build_query($query)};

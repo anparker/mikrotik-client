@@ -56,5 +56,12 @@ $words = $s->fetch(\$packed);
 is_deeply $words, ['/one/two', '?five=six'], 'right results';
 ok $s->is_incomplete, 'incomplete is set';
 
+my $err;
+$SIG{__WARN__} = sub { $err = $_[0] };
+$packed = encode_sentence('/cmd', {argv => undef});
+ok !$err, 'no warning';
+$words = $s->reset->fetch(\$packed);
+is_deeply $words, ['/cmd', '=argv='], 'right results';
+
 done_testing();
 

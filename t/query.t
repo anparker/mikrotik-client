@@ -80,5 +80,13 @@ is_deeply $r, ['?a=1', '?c=5', '?#|'], 'ignore empty structs';
 $r = build_query([a => [{'=', []}, 2, {}]]);
 is_deeply $r, ['?a=2'], 'ignore empty structs';
 
+my $err;
+$SIG{__WARN__} = sub { $err = $_[0] };
+$r = build_query([a => undef, b => [1, undef, 2], c => {'=', undef}]);
+ok !$err, 'no warning';
+is_deeply $r, ['?a=', '?b=1', '?b=', '?b=2', '?#||', '?c=', '?#||'],
+    'right result';
+
+
 done_testing();
 

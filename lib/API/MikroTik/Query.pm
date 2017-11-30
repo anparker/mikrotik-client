@@ -77,7 +77,7 @@ sub _value {
     }
 
     # SCALAR
-    return "?$name=$val";
+    return "?$name=" . ($val // '');
 }
 
 sub _value_array {
@@ -90,11 +90,11 @@ sub _value_array {
         if @$block[0] eq '-and' || @$block[0] eq '-or';
 
     my ($count, @words) = (0, ());
-    while (my $el = shift @$block) {
+    for (@$block) {
         my @expr
-            = ref $el eq 'HASH'
-            ? _value_hash($name, $el)
-            : _value_scalar($name, $op, $el);
+            = ref $_ eq 'HASH'
+            ? _value_hash($name, $_)
+            : _value_scalar($name, $op, $_);
 
         ++$count && push @words, @expr if @expr;
     }
@@ -120,7 +120,7 @@ sub _value_hash {
 }
 
 sub _value_scalar {
-    my ($name, $op, $val) = @_;
+    my ($name, $op, $val) = (shift, shift, shift // '');
 
     return ("?$name=$val", '?#!') if $op eq '-not';
     return '?' . $name . $op . $val;
