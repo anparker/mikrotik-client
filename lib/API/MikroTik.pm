@@ -3,12 +3,15 @@ use Mojo::Base '-base';
 
 use API::MikroTik::Response;
 use API::MikroTik::Sentence qw(encode_sentence);
+use Carp ();
 use Mojo::Collection;
 use Mojo::IOLoop;
 use Mojo::Util 'md5_sum';
 use Scalar::Util 'weaken';
 
 use constant DEBUG => $ENV{API_MIKROTIK_DEBUG} || 0;
+use constant PROMISES => !!(eval { require Mojo::Promise; 1 });
+
 our $VERSION = '0.22';
 
 has error    => '';
@@ -23,6 +26,7 @@ has _tag     => 0;
 
 # Aliases
 Mojo::Util::monkey_patch(__PACKAGE__, 'cmd',   \&command);
+Mojo::Util::monkey_patch(__PACKAGE__, 'cmd_p', \&command_p);
 Mojo::Util::monkey_patch(__PACKAGE__, '_fail', \&_finish);
 
 sub DESTROY { Mojo::Util::_global_destruction() or shift->_cleanup() }
@@ -35,7 +39,7 @@ sub cancel {
 
 sub command {
     my $cb = ref $_[-1] eq 'CODE' ? pop : undef;
-    my ($self, $cmd, $attr, $query) = (shift, shift // '', shift // {}, shift);
+    my ($self, $cmd, $attr, $query) = @_;
 
     # non-blocking
     return $self->_command(Mojo::IOLoop->singleton, $cmd, $attr, $query, $cb)
@@ -50,11 +54,29 @@ sub command {
     return $res;
 }
 
+sub command_p {
+    Carp::croak 'Mojolicious v7.54+ is required for using promises.'
+        unless PROMISES;
+    my ($self, $cmd, $attr, $query) = @_;
+
+    my $p = Mojo::Promise->new();
+    $self->_command(
+        Mojo::IOLoop->singleton,
+        $cmd, $attr, $query,
+        sub {
+            return $p->reject($_[1], $_[2]) if $_[1];
+            $p->resolve($_[2]);
+        }
+    );
+
+    return $p;
+}
+
 sub subscribe {
     do { $_[0]->{error} = 'can\'t subscribe in blocking mode'; return; }
         unless ref $_[-1] eq 'CODE';
     my $cb = pop;
-    my ($self, $cmd, $attr, $query) = (shift, shift // '', shift // {}, shift);
+    my ($self, $cmd, $attr, $query) = @_;
     $attr->{'.subscription'} = 1;
     return $self->_command(Mojo::IOLoop->singleton, $cmd, $attr, $query, $cb);
 }
@@ -375,6 +397,12 @@ Cancel background commands. Can accept callback as last argument.
 
 An alias for L</command>.
 
+=head2 cmd_p
+
+  my $promise = $api->cmd_p('/interface/print');
+
+An alias for L</command_p>.
+
 =head2 command
 
   my $command = '/interface/print';
@@ -414,6 +442,22 @@ replies in addition to error messages in an L</error> attribute or an C<$err>
 argument. You should never rely on defines of result to catch errors.
 
 For information on query syntax refer to L<API::MikroTik::Query>.
+
+=head2 command_p
+
+  my $promise = $api->command_p('/interface/print');
+
+  $promise->then(
+  sub {
+      my $res = shift;
+      ...
+  })->catch(sub {
+      my ($err, $attr) = @_;
+  });
+
+Same as L</command>, but always performs requests non-blocking and returns a
+L<Mojo::Promise> object instead of accepting a callback. L<Mojolicious> v7.54+ is
+required for promises functionality.
 
 =head2 subscribe
 

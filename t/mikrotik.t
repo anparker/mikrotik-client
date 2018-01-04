@@ -99,6 +99,11 @@ $api->_fail_all(Mojo::IOLoop->singleton, 'test error');
 is $err1, 'test error', 'right error';
 is $err2, 'test error', 'right error';
 
+if (API::MikroTik->PROMISES) {
+    my $p = $api->cmd_p('test');
+    isa_ok $p, 'Mojo::Promise', 'right result type';
+}
+
 done_testing();
 
 
