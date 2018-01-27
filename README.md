@@ -27,7 +27,7 @@
   # Subscribe
   $tag = $api->subscribe(
       '/interface/listen' => sub {
-          my ($api, $err, $list) = @_;
+          my ($api, $err, $res) = @_;
           ...;
       }
   );

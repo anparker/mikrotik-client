@@ -217,7 +217,7 @@ sub _read {
             if %$_ && !$r->{subscription};
 
         if ($type eq '!re' && $r->{subscription}) {
-            $r->{cb}->($self, '', [$_]);
+            $r->{cb}->($self, '', $_);
 
         }
         elsif ($type eq '!done') {
@@ -289,7 +289,7 @@ API::MikroTik - Non-blocking interface to MikroTik API.
   # Subscribe
   $tag = $api->subscribe(
       '/interface/listen' => sub {
-          my ($api, $err, $list) = @_;
+          my ($api, $err, $err) = @_;
           ...;
       }
   );
@@ -465,7 +465,9 @@ required for promises functionality.
 =head2 subscribe
 
   my $tag = $api->subscribe('/ping',
-      {address => '127.0.0.1'} => sub { shift; say Dumper [@_]; });
+      {address => '127.0.0.1'} => sub {
+        my ($api, $err, $res) = @_;
+      });
 
   Mojo::IOLoop->timer(
       3 => sub { $a->cancel($tag) }
