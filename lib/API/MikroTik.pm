@@ -109,8 +109,8 @@ sub _connect {
 
     my $queue = $self->{queues}{$r->{loop}} = [$r];
 
-    my $port
-        = $self->port ? $self->{port} : (my $tls = $self->tls) ? 8729 : 8728;
+    my $tls = $self->tls;
+    my $port = $self->port ? $self->{port} : $tls ? 8729 : 8728;
 
     $r->{loop}->client(
         {
