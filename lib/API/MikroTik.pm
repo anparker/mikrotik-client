@@ -123,6 +123,8 @@ sub _connect {
         } => sub {
             my ($loop, $err, $stream) = @_;
 
+            delete $self->{queues}{$loop};
+
             if ($err) { $self->_fail($_, $err) for @$queue; return }
 
             warn "-- connection established\n" if DEBUG;
@@ -144,7 +146,6 @@ sub _connect {
             $self->_login(
                 $loop,
                 sub {
-                    delete $self->{queues}{$loop};
                     if ($_[1]) {
                         $_[0]->_fail($_, $_[1]) for @$queue;
                         $stream->close();
