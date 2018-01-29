@@ -94,7 +94,7 @@ sub _close {
     my ($self, $loop) = @_;
     $self->_fail_all($loop, 'closed prematurely');
     delete $self->{handles}{$loop};
-    delete $self->{response}{$loop};
+    delete $self->{responses}{$loop};
 }
 
 sub _command {
@@ -208,7 +208,7 @@ sub _read {
 
     warn "-- read bytes from socket: " . (length $bytes) . "\n" if DEBUG;
 
-    my $response = $self->{response}{$loop} ||= API::MikroTik::Response->new();
+    my $response = $self->{responses}{$loop} ||= API::MikroTik::Response->new();
     my $data = $response->parse(\$bytes);
 
     for (@$data) {
