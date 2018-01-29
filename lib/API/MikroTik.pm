@@ -90,6 +90,13 @@ sub _cleanup {
     delete $self->{handles};
 }
 
+sub _close {
+    my ($self, $loop) = @_;
+    $self->_fail_all($loop, 'closed prematurely');
+    delete $self->{handles}{$loop};
+    delete $self->{response}{$loop};
+}
+
 sub _command {
     my ($self, $loop, $cmd, $attr, $query, $cb) = @_;
 
@@ -135,13 +142,7 @@ sub _connect {
             $stream->on(read => sub { $self->_read($loop, $_[1]) });
             $stream->on(
                 error => sub { $self and $self->_fail_all($loop, $_[1]) });
-            $stream->on(
-                close => sub {
-                    $self
-                        and delete $self->{handles}{$loop}
-                        and delete $self->{response}{$loop};
-                }
-            );
+            $stream->on(close => sub { $self && $self->_close($loop) });
 
             $self->_login(
                 $loop,
