@@ -87,6 +87,5 @@ ok !$err, 'no warning';
 is_deeply $r, ['?a=', '?b=1', '?b=', '?b=2', '?#||', '?c=', '?#||'],
     'right result';
 
-
 done_testing();
 

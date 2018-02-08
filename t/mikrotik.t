@@ -3,147 +3,118 @@
 use warnings;
 use strict;
 
+BEGIN {
+    $ENV{API_MIKROTIK_CONNTIMEOUT} = 0.5;
+    $ENV{MOJO_NO_TLS}              = 1;
+}
+
+use FindBin;
 use lib './';
+use lib "$FindBin::Bin/lib";
 
 use Test::More;
 
 use API::MikroTik;
-use API::MikroTik::Response;
-use API::MikroTik::Sentence;
+use API::MikroTik::Mockup;
 use Mojo::IOLoop;
+use Mojo::Util qw(steady_time);
 
-my $r = API::MikroTik::Response->new();
-
-my $count   = 0;
-my $chat    = _chat_log();
-my $serv_id = Mojo::IOLoop->server(
-    {address => '127.0.0.1'} => sub {
-        my ($loop, $stream, $id) = @_;
-        $stream->on(
-            read => sub {
-                my ($stream, $bytes) = @_;
-
-                my $data = $r->parse(\$bytes);
-                for (@$data) {
-                    my $line = $chat->[$count];
-
-                    is_deeply $_, @$line[1, 0];
-
-                    my $resp = '';
-                    $resp .= API::MikroTik::Sentence::_encode_word($_)
-                        for @{$line->[2]};
-                    $stream->write($resp);
-
-                    $count++;
-                }
-            }
-        );
-    }
-);
-my $port = Mojo::IOLoop->acceptor($serv_id)->port;
+# blocking
+my $loop   = Mojo::IOLoop->new();
+my $mockup = API::MikroTik::Mockup->new()->ioloop($loop);
+my $port   = $loop->acceptor($mockup->server)->port;
 
 my $api = API::MikroTik->new(
     user     => 'test',
     password => 'tset',
     host     => '127.0.0.1',
     port     => $port,
-    tls      => 0,
+    tls      => 1,
+    ioloop   => $loop,
 );
 
-# delay requests until loop start
-Mojo::IOLoop->next_tick(
-    sub {
-        $api->cmd(
-            '/system/resource/print',
-            {'.proplist' => 'board-name,version,uptime'} => sub {
-                shift;
-                isa_ok $_[1], 'Mojo::Collection', 'right result type';
-                is_deeply [@_],
-                    [
-                    '',
-                    [
-                        {
-                            'board-name' => 'dummy',
-                            uptime       => '0d0h0s',
-                            version      => '0.00'
-                        },
-                        {
-                            'board-name' => 'dummy',
-                            uptime       => '0d0h0s',
-                            version      => '0.01'
-                        },
-                    ]
-                    ],
-                    'c: command response';
-            }
-        );
-        $api->cmd(
-            '/random/command' => sub {
-                shift;
-                is_deeply [@_],
-                    [
-                    'random error', [{message => 'random error', category => 0}]
-                    ],
-                    'c: command error';
-                Mojo::IOLoop->stop();
-            }
-        );
+# check connection
+$api->tls(1);
+my $res = $api->cmd('/resp');
+like $api->error, qr/IO::Socket::SSL/, 'connection error';
+$api->tls(0);
+
+# check login
+$api->password('');
+$res = $api->cmd('/resp');
+like $api->error, qr/cannot log/, 'login error';
+$api->password('tset');
+
+# timeouts
+$api->timeout(1);
+my $ctime = steady_time();
+$res = $api->cmd('/nocmd');
+ok((steady_time() - $ctime) < 1.1, 'timeout ok');
+$api->timeout(0.5);
+$ctime = steady_time();
+$res   = $api->cmd('/nocmd');
+ok((steady_time() - $ctime) < 0.6, 'timeout ok');
+$api->timeout(1);
+
+# close connection prematurely, next command should succeed
+$res = $api->cmd('/close/premature');
+ok !$res, 'no result';
+is $api->error, 'closed prematurely', 'right error';
+
+# also check previous test case on errors
+$res = $api->cmd('/resp');
+isa_ok $res, 'Mojo::Collection', 'right result type';
+is_deeply $res, _gen_result(), 'right result';
+
+$res = $api->cmd('/resp', {'.proplist' => 'prop0,prop2'});
+is_deeply $res, _gen_result('prop0,prop2'), 'right result';
+
+$res = $api->cmd('/resp', {'.proplist' => 'prop0,prop2', count => 3});
+is_deeply $res, _gen_result('prop0,prop2', 3), 'right result';
+
+$res = $api->cmd('/err');
+is $api->error, 'random error', 'right error';
+is_deeply $res, [{message => 'random error', category => 0}],
+    'right error attributes';
+
+# non-blocking
+my $mockup_nb = API::MikroTik::Mockup->new()->port($port);
+$mockup_nb->server;
+
+$api->cmd(
+    '/resp',
+    {'.proplist' => 'prop0,prop2', count => 1} => sub {
+        is_deeply $_[2], _gen_result('prop0,prop2', 1), 'right result';
     }
 );
-Mojo::IOLoop->start();
+
+# subscriptions
+my ($err, $tag);
+$res = undef;
+$tag = $api->subscribe(
+    '/subs',
+    {key => 'nnn'} => sub {
+        $res = $_[2] unless $err = $_[1];
+        $api->cancel($tag);
+    }
+);
 
 my ($err1, $err2);
-$api->cmd('/test/cmd1' => sub { $err1 = $_[1] });
-$api->cmd('/test/cmd1' => sub { $err2 = $_[1] });
-$api->_fail_all(Mojo::IOLoop->singleton, 'test error');
-is $err1, 'test error', 'right error';
-is $err2, 'test error', 'right error';
+$api->cmd('/err' => sub { $err1 = $_[1] . '1' });
+$api->cmd('/err' => sub { $err2 = $_[1] . '2' });
 
-if (API::MikroTik->PROMISES) {
-    my $p = $api->cmd_p('test');
-    isa_ok $p, 'Mojo::Promise', 'right result type';
-}
+Mojo::IOLoop->timer(1.3 => sub { Mojo::IOLoop->stop() });
+Mojo::IOLoop->start();
+
+is_deeply $res, {key => 'nnn'}, 'right result';
+is $err,  'interrupted',   'right error';
+is $err1, 'random error1', 'right error';
+is $err2, 'random error2', 'right error';
 
 done_testing();
 
-
-sub _chat_log {
-    return [
-        [
-            's: login request',
-            {'.type' => '/login', '.tag' => 3},
-            ['!done', '.tag=3', '=ret=098f6bcd4621d373cade4e832627b4f6', '',],
-        ],
-        [
-            's: login response',
-            {
-                '.type'  => '/login',
-                '.tag'   => 4,
-                name     => 'test',
-                response => '00119ce7e093e33497053e73f37a5d3e15',
-            },
-            ['!done', '.tag=4', '',],
-        ],
-        [
-            's: command request',
-            {
-                '.type'     => '/system/resource/print',
-                '.tag'      => 1,
-                '.proplist' => 'board-name,version,uptime',
-            },
-            [
-                '!re', '.tag=1', '=board-name=dummy', '=version=0.00',
-                '=uptime=0d0h0s', '',
-                '!re', '.tag=1', '=board-name=dummy', '=version=0.01',
-                '=uptime=0d0h0s', '',
-                '!done', '.tag=1', '',
-             ],
-        ],
-        [
-            's: misused command request',
-            {'.type' => '/random/command', '.tag' => 2},
-            ['!trap', '.tag=2', '=message=random error', '=category=0', ''],
-        ],
-    ];
+sub _gen_result {
+    my $attr = API::MikroTik::Mockup::_gen_attr(@_);
+    return [$attr, $attr];
 }
 

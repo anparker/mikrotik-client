@@ -26,34 +26,34 @@ is $s->_fetch_word(\$encoded), 'bla' x 3, 'right decoded word';
 is length($encoded), 152, 'right length';
 is $s->_fetch_word(\$encoded), 'bla' x 50, 'right decoded word';
 
-$packed = encode_sentence('/sys/info/print', {test => 1, another => 2});
-$packed .= encode_sentence(
-    '/login',
-    {ret  => 'foo', user => 'bar'},
-    {user => 'test'}, 11
-);
+$packed = encode_sentence('/cmd/1', {a => 1, b => 2});
+$packed
+    .= encode_sentence('/cmd/2', {c => 'foo', d => 'bar'}, {e => 'baz'}, 11);
 my $words = $s->fetch(\$packed);
-is shift @$words, '/sys/info/print', 'right command';
-is_deeply [sort @$words], ['=another=2', '=test=1'], 'right attributes';
+is shift @$words, '/cmd/1', 'right command';
+is_deeply [sort @$words], ['=a=1', '=b=2'], 'right attributes';
 $words = $s->fetch(\$packed);
-is shift @$words, '/login', 'right command';
-is_deeply [sort @$words], ['.tag=11', '=ret=foo', '=user=bar', '?user=test'],
+is shift @$words, '/cmd/2', 'right command';
+is_deeply [sort @$words], ['.tag=11', '=c=foo', '=d=bar', '?e=baz'],
     'right attributes';
 
-# buffer ends in the middle of the word
-$packed = encode_sentence('/sys/info/print', {test => 1, another => 2});
-substr $packed, 20, 16, '';
+# buffer ends in the middle of a word
+$packed = encode_sentence('/one/two/three', {test => 1, another => 2});
+substr $packed, 20, 20, '';
 $words = $s->fetch(\$packed);
-is_deeply $words, ['/sys/info/print'], 'right results';
+is_deeply $words, ['/one/two/three'], 'right results';
 ok $s->is_incomplete, 'incomplete is set';
+
+# reset
 $s->reset;
 ok !$s->is_incomplete, 'incomplete is not longer set';
 
 # buffer ends at the end of the word, before an empty closing word
-$packed = encode_sentence('/one/two', {}, {three => 'four', five => 'six'});
-substr $packed, 19, 17, '';
+$packed = encode_sentence('/one/two', {three => 'four'});
+my $tr = substr $packed, -1, 1, '';
+is $tr, "\0", 'trailing empty word';
 $words = $s->fetch(\$packed);
-is_deeply $words, ['/one/two', '?five=six'], 'right results';
+is_deeply $words, ['/one/two', '=three=four'], 'right results';
 ok $s->is_incomplete, 'incomplete is set';
 
 my $err;
