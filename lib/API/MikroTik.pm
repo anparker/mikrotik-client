@@ -442,7 +442,7 @@ An alias for L</command_p>.
       die "Error: $err, category: " . $list->[0]{category};
   }
 
-Execute command on remote host and returns L<Mojo::Collection> with hashrefs
+Execute a command on a remote host and returns L<Mojo::Collection> with hashrefs
 containing elements returned by host. You can append callback for non-blocking
 calls.
 
@@ -479,7 +479,7 @@ required for promises functionality.
       3 => sub { $a->cancel($tag) }
   );
 
-Subscribe to output of commands with continuous responses such as C<listen> or
+Subscribe to an output of command with continuous responses such as C<listen> or
 C<ping>. Should be terminated with L</cancel>.
 
 =head1 DEBUGGING
