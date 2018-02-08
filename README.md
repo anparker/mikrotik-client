@@ -1,7 +1,7 @@
 # API::MikroTik - Non-blocking interface to MikroTik API.
 
 Blocking and non-blocking API interface with queries, command subscriptions
-and Promises/A+ (courtesy of L<Mojo::IOLoop>.
+and Promises/A+ (courtesy of L<Mojo::IOLoop>).
 
 ```perl
   my $api = API::MikroTik->new();
