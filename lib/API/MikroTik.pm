@@ -331,7 +331,7 @@ L<API::MikroTik> implements the following attributes.
 
   my $last_error = $api->error;
 
-Keeps error from last L</command> call. Empty string on successful commands.
+Keeps an error from last L</command> call. Empty string on successful commands.
 
 =head2 host
 
@@ -442,7 +442,7 @@ An alias for L</command_p>.
       die "Error: $err, category: " . $list->[0]{category};
   }
 
-Execute command on remote host and return L<Mojo::Collection> with hashrefs
+Execute command on remote host and returns L<Mojo::Collection> with hashrefs
 containing elements returned by host. You can append callback for non-blocking
 calls.
 
@@ -450,7 +450,7 @@ In a case of error it may return extra attributes to C<!trap> or C<!fatal> API
 replies in addition to error messages in an L</error> attribute or an C<$err>
 argument. You should never rely on defines of result to catch errors.
 
-For information on query syntax refer to L<API::MikroTik::Query>.
+For a query syntax refer to L<API::MikroTik::Query>.
 
 =head2 command_p
 

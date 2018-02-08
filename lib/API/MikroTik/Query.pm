@@ -277,7 +277,7 @@ be treated as blocks in nested expressions.
 
 =head2 Logic and nesting
 
-  # (mtu = 1460 AND actual-mdu = 1460)
+  # (mtu = 1460 AND actual-mtu = 1460)
   #   AND
   # (running = 'false' OR disabled = 'true')
 
@@ -295,7 +295,7 @@ them.
       -or  => {running => 'false', disabled     => 'true'}
   };
 
-You can change logic applied to a block by using special keywords. Those keywords
+You can change logic applied to a block by using keywords. Those keywords
 will go outside for blocks that affect multiple attributes, or ...
 
   # !(type = 'ether') AND !(type = 'wlan')
