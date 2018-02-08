@@ -1,5 +1,8 @@
 # API::MikroTik - Non-blocking interface to MikroTik API.
 
+Blocking and non-blocking API interface with queries, command subscriptions
+and Promises/A+ (courtesy of L<Mojo::IOLoop>.
+
 ```perl
   my $api = API::MikroTik->new();
 
@@ -23,7 +26,6 @@
   );
   Mojo::IOLoop->start();
 
-
   # Subscribe
   $tag = $api->subscribe(
       '/interface/listen' => sub {
@@ -33,7 +35,6 @@
   );
   Mojo::IOLoop->timer(3 => sub { $api->cancel($tag) });
   Mojo::IOLoop->start();
-
 
   # Errors handling
   $api->command(
@@ -48,5 +49,11 @@
           ...;
       }
   );
+  Mojo::IOLoop->start();
+
+  # Promises
+  $api->cmd_p('/interface/print')
+      ->then(sub { my $res = shift }, sub { my ($err, $attr) = @_ })
+      ->finally(sub { Mojo::IOLoop->stop() });
   Mojo::IOLoop->start();
 ```

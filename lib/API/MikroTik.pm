@@ -286,7 +286,6 @@ API::MikroTik - Non-blocking interface to MikroTik API.
   );
   Mojo::IOLoop->start();
 
-
   # Subscribe
   $tag = $api->subscribe(
       '/interface/listen' => sub {
@@ -296,7 +295,6 @@ API::MikroTik - Non-blocking interface to MikroTik API.
   );
   Mojo::IOLoop->timer(3 => sub { $api->cancel($tag) });
   Mojo::IOLoop->start();
-
 
   # Errors handling
   $api->command(
@@ -313,9 +311,16 @@ API::MikroTik - Non-blocking interface to MikroTik API.
   );
   Mojo::IOLoop->start();
 
+  # Promises
+  $api->cmd_p('/interface/print')
+      ->then(sub { my $res = shift }, sub { my ($err, $attr) = @_ })
+      ->finally(sub { Mojo::IOLoop->stop() });
+  Mojo::IOLoop->start();
+
 =head1 DESCRIPTION
 
-Both blocking and non-blocking interface to MikroTik API service. Based on
+Both blocking and non-blocking interface to MikroTik API service. With queries,
+command subscriptions and Promises/A+ (courtesy of an I/O loop). Based on
 L<Mojo::IOLoop> and would work alongside L<EV>.
 
 =head1 ATTRIBUTES
