@@ -1,4 +1,4 @@
-# API::MikroTik - Non-blocking interface to MikroTik API.
+# API::MikroTik - Non-blocking interface to MikroTik API. [![Build Status](https://travis-ci.org/anparker/api-mikrotik.svg?branch=master)](https://travis-ci.org/anparker/api-mikrotik)
 
 Blocking and non-blocking API interface with queries, command subscriptions
 and Promises/A+ (courtesy of L<Mojo::IOLoop>).
