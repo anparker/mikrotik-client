@@ -195,7 +195,7 @@ Builds a query and returns an arrayref with API query words.
 =head1 QUERY SYNTAX
 
 Basic idea is that everything in arrayrefs are C<OR>'ed and everything in hashrefs
-are C<AND>'ed, unless specified otherwise. Another thing is, where a C<value> is
+are C<AND>'ed unless specified otherwise. Another thing is, where a C<value> is
 expected, you should be able to use a list to compare against a set of values.
 
 =head2 Key-value pairs
@@ -321,8 +321,6 @@ will go outside for blocks that affect multiple attributes, or ...
 
 C<-and> will be treated as prefix for the first hashref and, since this hash has
 only one element, won't affect anything at all.
-
-Mmm.
 
 =cut
 
