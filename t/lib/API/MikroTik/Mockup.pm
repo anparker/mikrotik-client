@@ -5,14 +5,24 @@ use API::MikroTik::Response;
 use API::MikroTik::Sentence qw(encode_sentence);
 use Mojo::IOLoop;
 
+has 'fd';
 has ioloop => sub { Mojo::IOLoop->singleton };
 has 'port';
 has res => sub { API::MikroTik::Response->new() };
 has server => sub {
     my $self = shift;
 
+    my $opts = {address => '127.0.0.1'};
+    if (my $fd = $self->fd) {
+        $opts->{fd} = $fd;
+    }
+    else {
+        $opts->{port}  = $self->port;
+        $opts->{reuse} = 1;
+    }
+
     my $serv_id = $self->ioloop->server(
-        {address => '127.0.0.1', port => $self->port, reuse => 1} => sub {
+        $opts => sub {
             my ($loop, $stream, $id) = @_;
 
             $self->{h} = $stream;
@@ -98,7 +108,7 @@ sub cmd_nocmd {
 
 sub cmd_resp {
     my (undef, $attr) = @_;
-    my $tag   = $attr->{'.tag'};
+    my $tag = $attr->{'.tag'};
 
     my $resp = ['!re', _gen_attr(@{$attr}{'.proplist', 'count'}), undef, $tag];
     return ($resp, $resp, _done($tag));

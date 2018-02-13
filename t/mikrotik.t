@@ -78,7 +78,8 @@ is_deeply $res, [{message => 'random error', category => 0}],
     'right error attributes';
 
 # non-blocking
-my $mockup_nb = API::MikroTik::Mockup->new()->port($port);
+my $mockup_nb = API::MikroTik::Mockup->new()
+    ->fd($loop->acceptor($mockup->server)->handle->fileno);
 $mockup_nb->server;
 
 $api->cmd(
