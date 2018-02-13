@@ -260,7 +260,7 @@ sub _write_sentence {
 
 =head1 NAME
 
-API::MikroTik - Non-blocking interface to MikroTik API.
+API::MikroTik - Non-blocking interface to MikroTik API
 
 =head1 SYNOPSIS
 
@@ -289,7 +289,7 @@ API::MikroTik - Non-blocking interface to MikroTik API.
   # Subscribe
   $tag = $api->subscribe(
       '/interface/listen' => sub {
-          my ($api, $err, $err) = @_;
+          my ($api, $err, $el) = @_;
           ...;
       }
   );
@@ -476,7 +476,7 @@ required for promises functionality.
       });
 
   Mojo::IOLoop->timer(
-      3 => sub { $a->cancel($tag) }
+      3 => sub { $api->cancel($tag) }
   );
 
 Subscribe to an output of command with continuous responses such as C<listen> or
