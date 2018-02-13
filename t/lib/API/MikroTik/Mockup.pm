@@ -13,7 +13,7 @@ has server => sub {
     my $self = shift;
 
     my $opts = {address => '127.0.0.1'};
-    if (my $fd = $self->fd) {
+    if (defined(my $fd = $self->fd)) {
         $opts->{fd} = $fd;
     }
     else {
