@@ -319,7 +319,7 @@ API::MikroTik - Non-blocking interface to MikroTik API
 
 =head1 DESCRIPTION
 
-Both blocking and non-blocking interface to MikroTik API service. With queries,
+Both blocking and non-blocking interface to a MikroTik API service. With queries,
 command subscriptions and Promises/A+ (courtesy of an I/O loop). Based on
 L<Mojo::IOLoop> and would work alongside L<EV>.
 
@@ -398,7 +398,7 @@ User name for authentication purposes. Defaults to C<admin>.
   # or with callback
   $api->cancel($tag => sub {...});
 
-Cancel background commands. Can accept callback as last argument.
+Cancels background commands. Can accept a callback as last argument.
 
 =head2 cmd
 
@@ -442,13 +442,13 @@ An alias for L</command_p>.
       die "Error: $err, category: " . $list->[0]{category};
   }
 
-Execute a command on a remote host and returns L<Mojo::Collection> with hashrefs
-containing elements returned by host. You can append callback for non-blocking
+Executes a command on a remote host and returns L<Mojo::Collection> with hashrefs
+containing elements returned by a host. You can append a callback for non-blocking
 calls.
 
 In a case of error it may return extra attributes to C<!trap> or C<!fatal> API
 replies in addition to error messages in an L</error> attribute or an C<$err>
-argument. You should never rely on defines of result to catch errors.
+argument. You should never rely on defines of the result to catch errors.
 
 For a query syntax refer to L<API::MikroTik::Query>.
 
@@ -479,15 +479,15 @@ required for promises functionality.
       3 => sub { $api->cancel($tag) }
   );
 
-Subscribe to an output of command with continuous responses such as C<listen> or
+Subscribe to an output of commands with continuous responses such as C<listen> or
 C<ping>. Should be terminated with L</cancel>.
 
 =head1 DEBUGGING
 
-You can set API_MIKROTIK_DEBUG environment variable to get some debug output
+You can set the API_MIKROTIK_DEBUG environment variable to get some debug output
 printed to stderr.
 
-Also, you can change connection timeout with API_MIKROTIK_CONNTIMEOUT variable.
+Also, you can change connection timeout with the API_MIKROTIK_CONNTIMEOUT variable.
 
 =head1 COPYRIGHT AND LICENSE
 

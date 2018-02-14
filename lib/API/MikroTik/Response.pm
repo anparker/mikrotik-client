@@ -36,7 +36,7 @@ sub parse {
 
 =head1 NAME
 
-API::MikroTik::Response - Parse responses from a buffer.
+API::MikroTik::Response - Parse responses from a buffer
 
 =head1 SYNOPSIS
 
@@ -88,7 +88,7 @@ sentence. There are some special attributes:
 
 Reply tag.
 
-=item 'type'
+=item '.type'
 
   '.type' => '!re'
 

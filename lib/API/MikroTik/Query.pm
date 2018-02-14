@@ -133,7 +133,7 @@ sub _value_scalar {
 
 =head1 NAME
 
-API::MikroTik::Query - Build MikroTik queries from perl structures.
+API::MikroTik::Query - Build MikroTik queries from perl structures
 
 =head1 SYNOPSIS
 

@@ -132,7 +132,7 @@ sub _strip_length {
 
 =head1 NAME
 
-API::MikroTik::Sentence - Encode and decode API sentences.
+API::MikroTik::Sentence - Encode and decode API sentences
 
 =head1 SYNOPSIS
 
@@ -168,21 +168,25 @@ Can be also called as an object method.
 
   my $words = $sentence->fetch(\$buff);
 
-Fetch sentence from a buffer and parse it into a list of API words. If called on
-an object marked as incomplete, will append data to previous results.
+Fetches a sentence from a buffer and parses it into a list of API words. In a
+situation when amount of data in the buffer are insufficient to complete the
+sentence, already processed words and the remaining buffer will be stored in an
+object. On a next call will prepend a buffer with kept data and merge a result
+with the one stored from a previous call.
+
 
 =head2 is_incomplete
 
   my $done = !$sentence->is_incomplete;
 
-Indicates that processed sentence is incomplete and remaining amount of data are
-insufficient to complete request.
+Indicates that a processed buffer was incomplete and remaining amount of data was
+insufficient to complete a sentence.
 
 =head2 reset
 
   my $sentence->reset;
 
-Clears incomplete status and removes remained buffer.
+Clears an incomplete status and removes a remaining buffer.
 
 =head1 SEE ALSO
 
