@@ -15,15 +15,16 @@ use constant PROMISES     => !!(eval { require Mojo::Promise; 1 });
 
 our $VERSION = '0.25';
 
-has error    => '';
-has host     => '192.168.88.1';
-has ioloop   => sub { Mojo::IOLoop->new() };
-has password => '';
-has port     => 0;
-has timeout  => 10;
-has tls      => 1;
-has user     => 'admin';
-has _tag     => 0;
+has error     => '';
+has host      => '192.168.88.1';
+has ioloop    => sub { Mojo::IOLoop->new() };
+has new_login => sub { $_[0]->tls || 0 };
+has password  => '';
+has port      => 0;
+has timeout   => 10;
+has tls       => 1;
+has user      => 'admin';
+has _tag      => 0;
 
 # Aliases
 Mojo::Util::monkey_patch(__PACKAGE__, 'cmd',   \&command);
@@ -185,11 +186,22 @@ sub _login {
 
   $loop->delay(
     sub {
-      $self->_command($loop, '/login', {}, undef, $_[0]->begin());
+      $self->_command(
+        $loop, '/login',
+        (
+          $self->new_login
+          ? {name => $self->user, password => $self->password}
+          : {}
+        ),
+        undef,
+        $_[0]->begin()
+      );
     },
     sub {
       my ($delay, $err, $res) = @_;
       return $self->$cb($err) if $err;
+      return $self->$cb() if !$res->[0]{ret};    # New style login
+
       my $secret = md5_sum("\x00", $self->password, pack 'H*', $res->[0]{ret});
       $self->_command($loop, '/login',
         {name => $self->user, response => "00$secret"},
@@ -348,6 +360,17 @@ Host name or IP address to connect to. Defaults to C<192.168.88.1>.
 
 Event loop object to use for blocking operations, defaults to L<Mojo::IOLoop>
 object.
+
+=head2 new_login
+
+  my $new_login = $api->new_login;
+  $api          = $api->new_login(1);
+
+Use new login scheme introduced in RouterOS C<v6.43>. Since it's requires clear
+text password, it will be default only for L</tls> connections.
+
+Cause C<v6.43> actually accepts both schemes, it's kinda lax change. Future
+behaviour will depend on MikroTik policies.
 
 =head2 password
 
