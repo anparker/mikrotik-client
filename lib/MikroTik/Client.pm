@@ -9,8 +9,8 @@ use Mojo::IOLoop;
 use Mojo::Util 'md5_sum';
 use Scalar::Util 'weaken';
 
-use constant CONN_TIMEOUT => $ENV{API_MIKROTIK_CONNTIMEOUT};
-use constant DEBUG        => $ENV{API_MIKROTIK_DEBUG} || 0;
+use constant CONN_TIMEOUT => $ENV{MIKROTIK_CLIENT_CONNTIMEOUT};
+use constant DEBUG        => $ENV{MIKROTIK_CLIENT_DEBUG} || 0;
 use constant PROMISES     => !!(eval { require Mojo::Promise; 1 });
 
 our $VERSION = '0.25';
@@ -482,10 +482,10 @@ C<ping>. Should be terminated with L</cancel>.
 
 =head1 DEBUGGING
 
-You can set the API_MIKROTIK_DEBUG environment variable to get some debug output
+You can set the MIKROTIK_CLIENT_DEBUG environment variable to get some debug output
 printed to stderr.
 
-Also, you can change connection timeout with the API_MIKROTIK_CONNTIMEOUT variable.
+Also, you can change connection timeout with the MIKROTIK_CLIENT_CONNTIMEOUT variable.
 
 =head1 COPYRIGHT AND LICENSE
 

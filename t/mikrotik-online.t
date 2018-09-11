@@ -8,14 +8,14 @@ use lib './';
 use Test::More;
 
 plan skip_all =>
-    'On-line tests. Set API_MIKROTIK_ONLINE to "host:user:pass:tls" to run.'
-    unless $ENV{API_MIKROTIK_ONLINE};
+    'On-line tests. Set MIKROTIK_CLIENT_ONLINE to "host:user:pass:tls" to run.'
+    unless $ENV{MIKROTIK_CLIENT_ONLINE};
 
 use MikroTik::Client;
 use MikroTik::Client::Response;
 use MikroTik::Client::Sentence;
 
-my ($h, $u, $p, $tls) = split ':', ($ENV{API_MIKROTIK_ONLINE} || '');
+my ($h, $u, $p, $tls) = split ':', ($ENV{MIKROTIK_CLIENT_ONLINE} || '');
 my $a = MikroTik::Client->new(
     user     => ($u   // 'admin'),
     password => ($p   // ''),

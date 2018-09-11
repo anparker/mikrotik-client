@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 BEGIN {
-    $ENV{API_MIKROTIK_CONNTIMEOUT} = 0.5;
+    $ENV{MIKROTIK_CLIENT_CONNTIMEOUT} = 0.5;
     $ENV{MOJO_NO_TLS}              = 1;
 }
 
