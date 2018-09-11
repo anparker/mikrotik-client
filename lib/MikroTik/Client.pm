@@ -6,7 +6,7 @@ use MikroTik::Client::Sentence qw(encode_sentence);
 use Carp ();
 use Mojo::Collection;
 use Mojo::IOLoop;
-use Mojo::Util 'md5_sum';
+use Mojo::Util qw(md5_sum term_escape);
 use Scalar::Util 'weaken';
 
 use constant CONN_TIMEOUT => $ENV{MIKROTIK_CLIENT_CONNTIMEOUT};
@@ -204,9 +204,11 @@ sub _login {
 sub _read {
   my ($self, $loop, $bytes) = @_;
 
-  warn "-- read bytes from socket: " . (length $bytes) . "\n" if DEBUG;
+  warn term_escape "-- read from socket: " . length($bytes) . "\n$bytes\n"
+    if DEBUG;
 
-  my $response = $self->{responses}{$loop} ||= MikroTik::Client::Response->new();
+  my $response = $self->{responses}{$loop}
+    ||= MikroTik::Client::Response->new();
   my $data = $response->parse(\$bytes);
 
   for (@$data) {
@@ -238,7 +240,8 @@ sub _send_request {
 
 sub _write_sentence {
   my ($self, $stream, $r) = @_;
-  warn "-- writing sentence for tag: $r->{tag}\n" if DEBUG;
+  warn term_escape "-- writing sentence for tag: $r->{tag}\n$r->{sentence}\n"
+    if DEBUG;
 
   $stream->write($r->{sentence});
 
