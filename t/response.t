@@ -6,10 +6,10 @@ use strict;
 use lib './';
 
 use Test::More;
-use API::MikroTik::Response;
-use API::MikroTik::Sentence qw(encode_sentence);
+use MikroTik::Client::Response;
+use MikroTik::Client::Sentence qw(encode_sentence);
 
-my $r = API::MikroTik::Response->new();
+my $r = MikroTik::Client::Response->new();
 
 my $packed = encode_sentence('!re', {a => 1, b => 2});
 $packed .= encode_sentence('!re', {c => 3, d => 4, e => 5}, undef, 3);

@@ -4,9 +4,9 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME         => 'API::MikroTik',
-    VERSION_FROM => 'lib/API/MikroTik.pm',
-    ABSTRACT     => 'Non-blocking MikroTik API interface',
+    NAME         => 'MikroTik::Client',
+    VERSION_FROM => 'lib/MikroTik/Client.pm',
+    ABSTRACT     => 'Non-blocking MikroTik API client',
     AUTHOR       => 'Andre Parker <andreparker@gmail.com>',
     LICENSE      => 'artistic_2',
     META_MERGE   => {
@@ -16,13 +16,13 @@ WriteMakefile(
         prereqs        => {runtime => {requires => {perl => '5.010001'}}},
         resources      => {
             bugtracker =>
-                {web => 'https://github.com/anparker/api-mikrotik/issues'},
+                {web => 'https://github.com/anparker/mikrotik-client/issues'},
             license =>
                 ['http://www.opensource.org/licenses/artistic-license-2.0'],
             repository => {
                 type => 'git',
-                url  => 'https://github.com/anparker/api-mikrotik.git',
-                web  => 'https://github.com/anparker/api-mikrotik',
+                url  => 'https://github.com/anparker/mikrotik-client.git',
+                web  => 'https://github.com/anparker/mikrotik-client',
             },
         },
     },

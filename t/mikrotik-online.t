@@ -11,12 +11,12 @@ plan skip_all =>
     'On-line tests. Set API_MIKROTIK_ONLINE to "host:user:pass:tls" to run.'
     unless $ENV{API_MIKROTIK_ONLINE};
 
-use API::MikroTik;
-use API::MikroTik::Response;
-use API::MikroTik::Sentence;
+use MikroTik::Client;
+use MikroTik::Client::Response;
+use MikroTik::Client::Sentence;
 
 my ($h, $u, $p, $tls) = split ':', ($ENV{API_MIKROTIK_ONLINE} || '');
-my $a = API::MikroTik->new(
+my $a = MikroTik::Client->new(
     user     => ($u   // 'admin'),
     password => ($p   // ''),
     host     => ($h   // '192.168.88.1'),

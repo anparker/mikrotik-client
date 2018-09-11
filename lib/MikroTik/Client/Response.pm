@@ -1,10 +1,10 @@
-package API::MikroTik::Response;
+package MikroTik::Client::Response;
 use Mojo::Base '-base';
 
-use API::MikroTik::Sentence;
+use MikroTik::Client::Sentence;
 
 has data     => sub { [] };
-has sentence => sub { API::MikroTik::Sentence->new() };
+has sentence => sub { MikroTik::Client::Sentence->new() };
 
 sub parse {
     my ($self, $buff) = @_;
@@ -36,13 +36,13 @@ sub parse {
 
 =head1 NAME
 
-API::MikroTik::Response - Parse responses from a buffer
+MikroTik::Client::Response - Parse responses from a buffer
 
 =head1 SYNOPSIS
 
-  use API::MikroTik::Response;
+  use MikroTik::Client::Response;
 
-  my $response = API::MikroTik::Response->new();
+  my $response = MikroTik::Client::Response->new();
 
   my $list = $response->parse(\$buff);
   for my $re (@$list) {
@@ -56,7 +56,7 @@ Parser for API protocol responses.
 
 =head1 ATTRIBUTES
 
-L<API::MikroTik::Response> implements the following attributes.
+L<MikroTik::Client::Response> implements the following attributes.
 
 =head2 data
 
@@ -67,9 +67,9 @@ Sentences fetched in last operation;
 =head2 sentence
 
   my $sentence = $response->sentence;
-  $response->sentence(API::MikroTik::Sentence->new());
+  $response->sentence(MikroTik::Client::Sentence->new());
 
-L<API::MikroTik::Sentence> object used to decode sentences from network buffer.
+L<MikroTik::Client::Sentence> object used to decode sentences from network buffer.
 
 =head1 METHODS
 
@@ -98,7 +98,7 @@ Reply type.
 
 =head1 SEE ALSO
 
-L<API::MikroTik>
+L<MikroTik::Client>
 
 =cut
 

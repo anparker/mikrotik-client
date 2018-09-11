@@ -6,7 +6,7 @@ use strict;
 use lib './';
 
 use Test::More;
-use API::MikroTik::Query 'build_query';
+use MikroTik::Client::Query 'build_query';
 
 my $r = build_query({a => 1, b => 2, c => 3, d => 4});
 is_deeply $r, ['?a=1', '?b=2', '?c=3', '?d=4', '?#&&&'], 'simple AND';

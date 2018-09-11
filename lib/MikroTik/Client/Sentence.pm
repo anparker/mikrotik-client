@@ -1,10 +1,10 @@
-package API::MikroTik::Sentence;
+package MikroTik::Client::Sentence;
 use Mojo::Base '-base';
 
 use Exporter 'import';
 our @EXPORT_OK = qw(encode_sentence);
 
-use API::MikroTik::Query 'build_query';
+use MikroTik::Client::Query 'build_query';
 
 has words => sub { [] };
 
@@ -132,11 +132,11 @@ sub _strip_length {
 
 =head1 NAME
 
-API::MikroTik::Sentence - Encode and decode API sentences
+MikroTik::Client::Sentence - Encode and decode API sentences
 
 =head1 SYNOPSIS
 
-  use API::MikroTik::Sentence qw(encode_sentence);
+  use MikroTik::Client::Sentence qw(encode_sentence);
 
   my $command = '/interface/print';
   my $attr    = {'.proplist' => '.id,name,type'};
@@ -145,7 +145,7 @@ API::MikroTik::Sentence - Encode and decode API sentences
 
   my $bytes = encode_sentence($command, $attr, $query, $tag);
 
-  my $sentence = API::MikroTik::Sentence->new();
+  my $sentence = MikroTik::Client::Sentence->new();
   my $words = $sentence->fetch(\$bytes);
   say $_ for @$words;
 
@@ -160,7 +160,7 @@ Provides subroutines for encoding API sentences and parsing them back into words
   my $bytes = encode_sentence($command, $attr, $query, $tag);
 
 Encodes sentence. Attributes is a hashref with attribute-value pairs. Query will
-be parsed with L<API::MikroTik::Query/build_query>.
+be parsed with L<MikroTik::Client::Query/build_query>.
 
 Can be also called as an object method.
 
@@ -190,7 +190,7 @@ Clears an incomplete status and removes a remaining buffer.
 
 =head1 SEE ALSO
 
-L<API::MikroTik>
+L<MikroTik::Client>
 
 =cut
 

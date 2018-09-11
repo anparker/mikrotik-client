@@ -1,4 +1,4 @@
-package API::MikroTik::Query;
+package MikroTik::Client::Query;
 use Mojo::Base '-base';
 
 use Exporter 'import';
@@ -133,11 +133,11 @@ sub _value_scalar {
 
 =head1 NAME
 
-API::MikroTik::Query - Build MikroTik queries from perl structures
+MikroTik::Client::Query - Build MikroTik queries from perl structures
 
 =head1 SYNOPSIS
 
-  use API::MikroTik::Query qw(build_query);
+  use MikroTik::Client::Query qw(build_query);
 
   # (a = 1 OR a = 2) AND (b = 3 OR c = 4 OR d = 5)
   my $query = {
@@ -182,7 +182,7 @@ ideas of L<SQL::Abstract>.
 
 =head2 build_query
 
-  use API::MikroTik::Query qw(build_query);
+  use MikroTik::Client::Query qw(build_query);
 
   # (type = 'ipip-tunnel' OR type = 'gre-tunnel') AND running = 'true'
   # $query
@@ -241,7 +241,7 @@ statement, for example.
   # status = 'active' OR status = 'inactive'
   $query = {mtu => {'=', ['active', 'inactive']}};
 
-Or you can use list as a value in a hashref pair. B<CAVEAT>: In that case, every
+Or you can use list as a value in a hashref pair. B<CAVEAT>: In this case, every
 other pair in the hash will be ignored.
 
 =head2 Negation
@@ -255,7 +255,7 @@ other pair in the hash will be ignored.
 Since MikroTik API does not have 'not equal' operator, it ends up been 'opposite
 of a equals b' expressions.
 
-=head2 Checking for an attributes
+=head2 Checking for an attribute
 
   my $query = {-has => 'dafault-name'};
 

@@ -12,17 +12,17 @@ use FindBin;
 use lib './';
 use lib "$FindBin::Bin/lib";
 
-use API::MikroTik;
-use API::MikroTik::Mockup;
+use MikroTik::Client;
+use MikroTik::Client::Mockup;
 use Mojo::IOLoop;
 use Test::More;
 
 plan skip_all => 'Mojolicious v7.54+ required for this test.'
-    unless API::MikroTik->PROMISES;
+    unless MikroTik::Client->PROMISES;
 
-my $mockup = API::MikroTik::Mockup->new();
+my $mockup = MikroTik::Client::Mockup->new();
 my $port   = Mojo::IOLoop->acceptor($mockup->server)->port;
-my $api    = API::MikroTik->new(
+my $api    = MikroTik::Client->new(
     user     => 'test',
     password => 'tset',
     host     => '127.0.0.1',
@@ -58,7 +58,7 @@ is_deeply $res, _gen_result(), 'right result';
 done_testing();
 
 sub _gen_result {
-    my $attr = API::MikroTik::Mockup::_gen_attr(@_);
+    my $attr = MikroTik::Client::Mockup::_gen_attr(@_);
     return [$attr, $attr];
 }
 

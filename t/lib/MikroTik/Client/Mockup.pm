@@ -1,14 +1,14 @@
-package API::MikroTik::Mockup;
+package MikroTik::Client::Mockup;
 use Mojo::Base '-base';
 
-use API::MikroTik::Response;
-use API::MikroTik::Sentence qw(encode_sentence);
+use MikroTik::Client::Response;
+use MikroTik::Client::Sentence qw(encode_sentence);
 use Mojo::IOLoop;
 
 has 'fd';
 has ioloop => sub { Mojo::IOLoop->singleton };
 has 'port';
-has res => sub { API::MikroTik::Response->new() };
+has res => sub { MikroTik::Client::Response->new() };
 has server => sub {
     my $self = shift;
 

@@ -14,17 +14,17 @@ use lib "$FindBin::Bin/lib";
 
 use Test::More;
 
-use API::MikroTik;
-use API::MikroTik::Mockup;
+use MikroTik::Client;
+use MikroTik::Client::Mockup;
 use Mojo::IOLoop;
 use Mojo::Util qw(steady_time);
 
 # blocking
 my $loop   = Mojo::IOLoop->new();
-my $mockup = API::MikroTik::Mockup->new()->ioloop($loop);
+my $mockup = MikroTik::Client::Mockup->new()->ioloop($loop);
 my $port   = $loop->acceptor($mockup->server)->port;
 
-my $api = API::MikroTik->new(
+my $api = MikroTik::Client->new(
     user     => 'test',
     password => 'tset',
     host     => '127.0.0.1',
@@ -78,7 +78,7 @@ is_deeply $res, [{message => 'random error', category => 0}],
     'right error attributes';
 
 # non-blocking
-my $mockup_nb = API::MikroTik::Mockup->new()
+my $mockup_nb = MikroTik::Client::Mockup->new()
     ->fd($loop->acceptor($mockup->server)->handle->fileno);
 $mockup_nb->server;
 
@@ -115,7 +115,7 @@ is $err2, 'random error2', 'right error';
 done_testing();
 
 sub _gen_result {
-    my $attr = API::MikroTik::Mockup::_gen_attr(@_);
+    my $attr = MikroTik::Client::Mockup::_gen_attr(@_);
     return [$attr, $attr];
 }
 

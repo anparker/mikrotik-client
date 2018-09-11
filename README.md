@@ -1,10 +1,10 @@
-# API::MikroTik - Non-blocking interface to MikroTik API. [![Build Status](https://travis-ci.org/anparker/api-mikrotik.svg?branch=master)](https://travis-ci.org/anparker/api-mikrotik)
+# MikroTik::Client - Non-blocking interface to MikroTik API. [![Build Status](https://travis-ci.org/anparker/api-mikrotik.svg?branch=master)](https://travis-ci.org/anparker/api-mikrotik)
 
 Blocking and non-blocking API interface with queries, command subscriptions
 and Promises/A+ (courtesy of [Mojo::IOLoop](http://github.com/kraih/mojo/)).
 
 ```perl
-  my $api = API::MikroTik->new();
+  my $api = MikroTik::Client->new();
 
   # Blocking
   my $list = $api->command(

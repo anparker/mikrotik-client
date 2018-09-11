@@ -6,21 +6,21 @@ use strict;
 use lib './';
 
 use Test::More;
-use API::MikroTik::Sentence qw(encode_sentence);
+use MikroTik::Client::Sentence qw(encode_sentence);
 
-my $s = API::MikroTik::Sentence->new();
+my $s = MikroTik::Client::Sentence->new();
 
 # length encoding
 my ($packed, $len);
 for (0x7f, 0x3fff, 0x1fffff, 0xfffffff, 0x10000000) {
-    $packed = API::MikroTik::Sentence::_encode_length($_);
-    ($len, undef) = API::MikroTik::Sentence::_strip_length(\$packed);
+    $packed = MikroTik::Client::Sentence::_encode_length($_);
+    ($len, undef) = MikroTik::Client::Sentence::_strip_length(\$packed);
     is $len, $_, "length encoding: $_";
 }
 
 # encode word
-my $encoded = API::MikroTik::Sentence::_encode_word('bla' x 3);
-$encoded .= API::MikroTik::Sentence::_encode_word('bla' x 50);
+my $encoded = MikroTik::Client::Sentence::_encode_word('bla' x 3);
+$encoded .= MikroTik::Client::Sentence::_encode_word('bla' x 50);
 is length($encoded), 162, 'right length';
 is $s->_fetch_word(\$encoded), 'bla' x 3, 'right decoded word';
 is length($encoded), 152, 'right length';
