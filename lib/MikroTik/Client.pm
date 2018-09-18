@@ -13,7 +13,7 @@ use constant CONN_TIMEOUT => $ENV{MIKROTIK_CLIENT_CONNTIMEOUT};
 use constant DEBUG        => $ENV{MIKROTIK_CLIENT_DEBUG} || 0;
 use constant PROMISES     => !!(eval { require Mojo::Promise; 1 });
 
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 has error     => '';
 has host      => '192.168.88.1';
