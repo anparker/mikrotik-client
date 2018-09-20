@@ -366,9 +366,9 @@ object.
   my $new_login = $api->new_login;
   $api          = $api->new_login(1);
 
-Use new login scheme introduced in RouterOS C<v6.43>. Since in this mode a
-password will be send in clear text, for some time it will be default only for
-L</tls> connections.
+Use new login scheme introduced in RouterOS C<v6.43> and fallback to previous
+one for older systems. Since in this mode a password will be send in clear text,
+for some time, it will be default only for L</tls> connections.
 
 =head2 password
 
