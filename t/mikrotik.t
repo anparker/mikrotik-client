@@ -21,9 +21,8 @@ use Mojo::Util qw(steady_time);
 
 # blocking
 my $loop   = Mojo::IOLoop->new();
-my $mockup = MikroTik::Client::Mockup->new();
-$mockup->ioloop($loop);
-my $port = $loop->acceptor($mockup->server)->port;
+my $mockup = MikroTik::Client::Mockup->new()->ioloop($loop);
+my $port   = $loop->acceptor($mockup->server)->port;
 
 my $api = MikroTik::Client->new(
     user     => 'test',
@@ -79,8 +78,8 @@ is_deeply $res, [{message => 'random error', category => 0}],
     'right error attributes';
 
 # non-blocking
-my $mockup_nb = MikroTik::Client::Mockup->new();
-$mockup_nb->fd($loop->acceptor($mockup->server)->handle->fileno);
+my $mockup_nb = MikroTik::Client::Mockup->new()
+    ->fd($loop->acceptor($mockup->server)->handle->fileno);
 $mockup_nb->server;
 
 $api->cmd(
