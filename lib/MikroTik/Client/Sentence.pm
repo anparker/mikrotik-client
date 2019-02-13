@@ -1,12 +1,12 @@
 package MikroTik::Client::Sentence;
-use Mojo::Base '-base';
+use MikroTik::Client::Mo;
 
 use Exporter 'import';
 our @EXPORT_OK = qw(encode_sentence);
 
 use MikroTik::Client::Query 'build_query';
 
-has words => sub { [] };
+has words => [];
 
 sub encode_sentence {
     shift if ref $_[0];

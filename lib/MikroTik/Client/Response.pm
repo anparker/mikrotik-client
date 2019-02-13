@@ -1,10 +1,10 @@
 package MikroTik::Client::Response;
-use Mojo::Base '-base';
+use MikroTik::Client::Mo;
 
 use MikroTik::Client::Sentence;
 
-has data     => sub { [] };
-has sentence => sub { MikroTik::Client::Sentence->new() };
+has data     => [];
+has sentence => (default => sub { MikroTik::Client::Sentence->new() });
 
 sub parse {
     my ($self, $buff) = @_;

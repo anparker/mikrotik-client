@@ -1,15 +1,15 @@
 package MikroTik::Client::Mockup;
-use Mojo::Base '-base';
+use MikroTik::Client::Mo;
 
 use MikroTik::Client::Response;
 use MikroTik::Client::Sentence qw(encode_sentence);
 use Mojo::IOLoop;
 
 has 'fd';
-has ioloop => sub { Mojo::IOLoop->singleton };
+has ioloop => (default => sub { Mojo::IOLoop->singleton });
 has 'port';
-has res => sub { MikroTik::Client::Response->new() };
-has server => sub {
+has res    => (default => sub { MikroTik::Client::Response->new() });
+has server => default => sub {
     my $self = shift;
 
     my $opts = {address => '127.0.0.1'};

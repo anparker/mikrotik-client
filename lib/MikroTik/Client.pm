@@ -1,5 +1,5 @@
 package MikroTik::Client;
-use Mojo::Base '-base';
+use MikroTik::Client::Mo;
 
 use MikroTik::Client::Response;
 use MikroTik::Client::Sentence qw(encode_sentence);
