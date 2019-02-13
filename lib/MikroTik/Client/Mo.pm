@@ -20,4 +20,9 @@ MikroTik::Client::Mo - Mo inlined
 
 Inlined version of L<Mo>. Will use C<default> feature automatically.
 
+=head1 CAVEATS
+
+Attributes behaviour changed in a way, that they will return an invocant
+instead of value when called with an argument to allow chaining.
+
 =cut
