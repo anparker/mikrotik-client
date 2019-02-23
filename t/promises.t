@@ -5,7 +5,6 @@ use strict;
 
 BEGIN {
     $ENV{MIKROTIK_CLIENT_CONNTIMEOUT} = 0.5;
-    $ENV{MOJO_NO_TLS}              = 1;
 }
 
 use FindBin;
