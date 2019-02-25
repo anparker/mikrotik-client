@@ -93,7 +93,7 @@ sub _command {
     my ($self, $cmd, $attr, $query, $cb) = @_;
 
     my $tag = ++$self->{_tag};
-    my $r = $self->{requests}{$tag} = {tag => $tag, cb => $cb};
+    my $r   = $self->{requests}{$tag} = {tag => $tag, cb => $cb};
     $r->{subscription} = delete $attr->{'.subscription'};
 
     warn "-- got request for command '$cmd' (tag: $tag)\n" if DEBUG;
@@ -109,7 +109,7 @@ sub _connect {
 
     my $queue = $self->{queue} = [$r];
 
-    my $tls = $self->tls;
+    my $tls  = $self->tls;
     my $port = $self->port ? $self->{port} : $tls ? 8729 : 8728;
 
     weaken $self;
@@ -193,11 +193,11 @@ sub _login {
 sub _read {
     my ($self, $buf) = @_;
 
-    warn _term_esc("-- read from socket: " . length($$buf) . "\n$$buf\n")
+    warn _term_esc("-- read buffer (" . length($$buf) . " bytes)\n$$buf\n")
         if DEBUG;
 
     my $response = $self->{response} ||= MikroTik::Client::Response->new();
-    my $data = $response->parse($buf);
+    my $data     = $response->parse($buf);
 
     for (@$data) {
         next unless my $r = $self->{requests}{delete $_->{'.tag'}};
