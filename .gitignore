@@ -21,3 +21,4 @@ nytprof.out
 *.swp
 *.DS_Store
 .vscode/
+*.tar.gz
