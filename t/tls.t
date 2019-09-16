@@ -9,7 +9,6 @@ use lib "$FindBin::Bin/lib";
 
 use Test::More;
 
-use AE;
 use Errno qw(EPROTO);
 use MikroTik::Client;
 use MikroTik::Client::Mockup;
