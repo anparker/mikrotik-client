@@ -21,9 +21,9 @@ plan skip_all => 'TLS with PKI tests. Set MIKROTIK_CLIENT_PKI to run.'
 
 my $mockup = MikroTik::Client::Mockup->new();
 $mockup->tls_opts({
-    ca_file                    => "./certs/ca.crt",
-    cert_file                  => "./certs/server.crt",
-    key_file                   => "./certs/server.key",
+    ca_file                    => "./t/certs/ca.crt",
+    cert_file                  => "./t/certs/server.crt",
+    key_file                   => "./t/certs/server.key",
     verify                     => 1,
     verify_require_client_cert => 1
 });
@@ -50,8 +50,8 @@ ok $! == EPROTO, "can't negotiate TLS";
 ok $api->error, "has error";
 
 # TLS certs without CA
-$api->cert("./certs/client.crt");
-$api->key("./certs/client.key");
+$api->cert("./t/certs/client.crt");
+$api->key("./t/certs/client.key");
 $api->cmd("/resp");
 ok $! == EPROTO, "can't negotiate TLS";
 ok $api->error, "has error";
@@ -66,9 +66,9 @@ ok !$api->error, 'no error';
 $api = MikroTik::Client->new(
     %client_opts,
     tls  => 1,
-    ca   => "./certs/ca.crt",
-    cert => "./certs/client.crt",
-    key  => "./certs/client.key"
+    ca   => "./t/certs/ca.crt",
+    cert => "./t/certs/client.crt",
+    key  => "./t/certs/client.key"
 );
 $res = $api->cmd("/resp");
 is_deeply $res, _gen_result(), 'right result';
@@ -78,8 +78,8 @@ ok !$api->error, 'no error';
 $api = MikroTik::Client->new(
     %client_opts,
     tls  => 1,
-    ca   => "./certs/ca.crt",
-    cert => "./certs/client-bundle.crt",
+    ca   => "./t/certs/ca.crt",
+    cert => "./t/certs/client-bundle.crt",
 );
 $res = $api->cmd("/resp");
 is_deeply $res, _gen_result(), 'right result';
