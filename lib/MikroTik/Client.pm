@@ -90,7 +90,7 @@ sub _cleanup {
 sub _close {
     my ($self, $err) = @_;
     $self->_fail_all($err || 'closed prematurely');
-    delete @{$self}{qw(handle response)};
+    delete @{$self}{qw(handle response requests)};
 }
 
 sub _command {
@@ -161,7 +161,8 @@ sub _enqueue {
 }
 
 sub _fail_all {
-    $_[0]->_fail($_, $_[1]) for values %{$_[0]->{requests}};
+    my @requests = values %{$_[0]->{requests}};
+    $_[0]->_fail($_, $_[1]) for @requests;
 }
 
 sub _finish {
