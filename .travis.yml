@@ -16,10 +16,6 @@ matrix:
       dist: trusty
     - perl: "5.12"
       dist: trusty
-    - perl: "5.10"
-      dist: trusty
-    - perl: "5.8"
-      dist: trusty
 env:
   global:
     - HARNESS_OPTIONS=j4
