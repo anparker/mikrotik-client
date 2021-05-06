@@ -15,8 +15,8 @@ use MikroTik::Client::Mockup;
 use Time::HiRes;
 
 
-plan skip_all => 'TLS with PKI tests. Set MIKROTIK_CLIENT_PKI to run.'
-    unless $ENV{MIKROTIK_CLIENT_PKI};
+plan skip_all => 'TLS tests. Set TEST_TLS to run.'
+    unless $ENV{TEST_TLS};
 
 my $mockup = MikroTik::Client::Mockup->new();
 $mockup->tls_opts({
