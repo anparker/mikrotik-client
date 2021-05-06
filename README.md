@@ -1,4 +1,4 @@
-# MikroTik::Client - Non-blocking interface to MikroTik API. [![Build Status](https://travis-ci.org/anparker/mikrotik-client.svg?branch=master)](https://travis-ci.org/anparker/mikrotik-client)
+# MikroTik::Client - Non-blocking interface to MikroTik API. [![Build Status](https://travis-ci.com/anparker/mikrotik-client.svg?branch=master)](https://travis-ci.com/anparker/mikrotik-client)
 
 Blocking and non-blocking API interface with queries, command subscriptions
 and Promises/A.
